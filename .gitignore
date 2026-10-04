@@ -1,0 +1,13 @@
+/target/
+*.class
+.mtj.tmp/
+*.jar
+*.war
+*.ear
+*.nar
+*.ear
+*.crash
+.classpath
+.project
+.settings/
+.factorypath
