@@ -11,6 +11,9 @@ import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 
 import cbl.minesweeper.model.MineFieldCell;
 import cbl.minesweeper.model.MinefieldModel;
@@ -133,15 +136,58 @@ public class MainController {
     // Initializes the GUI View objects
     private void initGUI() {
         frmMineSweeper = new JFrame();
+        
         pnlTopControl = new TopControlPanel(this);
-        frmMineSweeper.add(pnlTopControl, BorderLayout.NORTH);
+        pnlTopControl.setMinesLeft(minesLeft);
+        pnlTopControl.setLayout(new BorderLayout());
 
+        JLabel lblMineCounter = new JLabel("Mines: 10");
+        pnlTopControl.add(lblMineCounter, BorderLayout.WEST);
+        
+        frmMineSweeper.add(pnlTopControl, BorderLayout.NORTH);
+        //smiley button
+        ImageIcon smileyicon = new ImageIcon(ICON_PATH + "smiley" + ICON_SUFFIX);
+        JButton btnRestart = new JButton(smileyicon);
+
+        JPanel pnlRestart = new JPanel();
+        pnlRestart.add(btnRestart);
+
+
+
+        //numbers png
+        ImageIcon oneicon = new ImageIcon(ICON_PATH + "one" + ICON_SUFFIX);
+        ImageIcon twoicon = new ImageIcon(ICON_PATH + "two" + ICON_SUFFIX);
+        ImageIcon threeicon = new ImageIcon(ICON_PATH + "three" + ICON_SUFFIX);
+
+        JLabel lblOne = new JLabel(oneicon);
+        JLabel lblTwo = new JLabel(twoicon);
+        JLabel lblThree = new JLabel(threeicon);
+
+
+        JPanel pnlCenter = new JPanel();
+
+        // center controls
+
+        pnlCenter.add(btnRestart);
+        pnlCenter.add(lblOne);
+        pnlCenter.add(lblTwo);
+        pnlCenter.add(lblThree);
+
+        pnlTopControl.add(pnlCenter, BorderLayout.CENTER);
+
+        //timer
+        JLabel lblTimer = new JLabel("Time: 00");
+        pnlTopControl.add(lblTimer, BorderLayout.EAST);
+
+        //bottom status bar
         lblStatusbar = new JLabel("");
         frmMineSweeper.add(lblStatusbar, BorderLayout.SOUTH);
 
+        //minesweeper board
         pnlMineSweeperBoard = new MinesweeperBoard(lblStatusbar, this);
         frmMineSweeper.add(pnlMineSweeperBoard);
 
+        //frame settings
         frmMineSweeper.setResizable(false);
         frmMineSweeper.pack();
         frmMineSweeper.setTitle("Minesweeper");
@@ -193,6 +239,8 @@ public class MainController {
         // Set the game status to ongoing
         // gameStatus = GameStatus.ONGOING;
         //TODO: Start the timer
+        
+
 
         EventQueue.invokeLater(() -> {
             var ex = frmMineSweeper; //new MinesweeperFrame(minefieldModel);
