@@ -211,12 +211,14 @@ public class MainController {
 
     // Handles the chores for winning the game.
     public void gameWon(){
-        // TODO: 
+        setGameStatus(GameStatus.WON);
+        timer.stop();
     }
 
     // Handles the chores for loss of the game.
     public void gameLost(){
         setGameStatus(GameStatus.LOST);
+        timer.stop();
         getMinefieldModel().revealAllMines();
     }
 
