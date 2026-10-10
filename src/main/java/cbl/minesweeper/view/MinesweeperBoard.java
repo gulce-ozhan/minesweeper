@@ -158,10 +158,26 @@ public class MinesweeperBoard extends JPanel {
     // This method is called to return the icon for a number cell.
     // If the cell was not a number (unlkely case), it return empty tile
     private Image getIconForNumberCell(MineFieldCell cell) {
-        // TODO: Return the appropriate icon for the number cell based on its content type. 
-        // If the content type is not a number, return the empty tile icon. 
-        Image image = null;
-        return image;
+        switch (cell.getContentType()) {
+            case ONE:
+                return ICN_ONE.getImage();
+            case TWO:
+                return ICN_TWO.getImage();
+            case THREE:
+                return ICN_THREE.getImage();
+            case FOUR:
+                return ICN_FOUR.getImage();
+            case FIVE:
+                return ICN_FIVE.getImage();
+            case SIX:
+                return ICN_SIX.getImage();
+            case SEVEN:
+                return ICN_SEVEN.getImage();
+            case EIGHT:
+                return ICN_EIGHT.getImage();
+            default:
+                return ICN_TILE_EMPTY.getImage();
+        }
     }   
 
     /*
@@ -188,11 +204,24 @@ public class MinesweeperBoard extends JPanel {
                     // unflagged. Update the mines left counter and the status bar accordingly. 
                     // If the user has flagged all mines correctly, inform the Controller that 
                     // the game is won.   
-                } else if (e.getButton() == MouseEvent.BUTTON1) {
-                    //TODO: Handle the left mouse click event to uncover a cell. If the cell is a
-                    // mine, inform the Controller that the game is lost. If the cell is empty, 
-                    // trigger the discovery of connected empty cells through the Controller. 
-                    // Update the status bar accordingly.
+                } else if (e.getButton() == MouseEvent.BUTTON1
+                    && mainControl.getGameStatus() == MainController.GameStatus.ONGOING
+                    && cell.getIconType() == MinefieldModel.IconType.TILE_COVERED) {
+                    int position = (cRow * mainControl.N_COLS) + cCol;
+                    switch (cell.getContentType()) {
+                        case MINE:
+                            cell.setIconType(MinefieldModel.IconType.MINE_EXPL);
+                            mainControl.gameLost();
+                            statusbar.setText("Game over! You hit a mine.");
+                            break;
+                        case ZERO:
+                            cell.setIconType(MinefieldModel.IconType.TILE_EMPTY);
+                            mainControl.discoverConnectedEmptyCells(position);
+                            break;
+                        default:
+                            cell.setIconType(MinefieldModel.IconType.NUMBER);
+                            break;
+                    }
                 }
             }
             repaint();
