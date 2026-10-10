@@ -1,4 +1,6 @@
 package cbl.minesweeper.model;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import cbl.minesweeper.controller.MainController;
@@ -42,11 +44,15 @@ public class MinefieldModel {
         random = new Random();
     }
 
-    //TODO: public static boolean isContentTypeNumber(ContentType contentType) {}
-    
+    /*
+     * Returns true if the content type is a number from ONE to EIGHT
+     */
+    public static boolean isContentTypeNumber(ContentType contentType) {
+        return contentType != ContentType.ZERO && contentType != ContentType.MINE;
+    }
 
     /*
-     * Initializes the mine field by randomly determining a new mine cell 
+     * Initializes the mine field by randomly determining a new mine cell
      * position and update its 8 neigbours' mine threat situation.
      */
     public void initializeMinefield() {
@@ -55,24 +61,88 @@ public class MinefieldModel {
         for (int i = 0; i < numberOfCells; i++) {
             field[i] = new MineFieldCell();
         }
-        // TODO: Randomly determine a new mine cell position and update its 8 neigbours'
-        //  mine threat situation.
+        // Never try to place more mines than there are cells, otherwise the
+        // loop below would never end
+        int minesToPlace = Math.min(mainController.N_MINES, numberOfCells);
+        int minesPlaced = 0;
+        while (minesPlaced < minesToPlace) {
+            int position = random.nextInt(numberOfCells);
+            // Skip cells that already have a mine, so no mine is placed twice
+            if (field[position].getContentType() == ContentType.MINE) {
+                continue;
+            }
+            field[position].setContentType(ContentType.MINE);
+            minesPlaced++;
+            // Every non-mine neighbour now has one more mine around it
+            for (int neighbour : getNeighbours(position)) {
+                ContentType contentType = field[neighbour].getContentType();
+                if (contentType != ContentType.MINE) {
+                    field[neighbour].setContentType(
+                        ContentType.values()[contentType.ordinal() + 1]);
+                }
+            }
+        }
+    }
 
+    /*
+     * Returns the positions of the (up to 8) neighbours of the given cell that
+     * lie within the minefield boundaries. Rows and columns are checked
+     * separately, because in the single array the cell left of column 0 would
+     * otherwise wrap around to the end of the previous row.
+     */
+    private List<Integer> getNeighbours(int position) {
+        int row = position / mainController.N_COLS;
+        int col = position % mainController.N_COLS;
+        List<Integer> neighbours = new ArrayList<>();
+        for (int dRow = -1; dRow <= 1; dRow++) {
+            for (int dCol = -1; dCol <= 1; dCol++) {
+                int nRow = row + dRow;
+                int nCol = col + dCol;
+                if ((dRow == 0 && dCol == 0)
+                    || nRow < 0 || nRow >= mainController.N_ROWS
+                    || nCol < 0 || nCol >= mainController.N_COLS) {
+                    continue;
+                }
+                neighbours.add(nRow * mainController.N_COLS + nCol);
+            }
+        }
+        return neighbours;
     }
 
     /*
      * If an empty cell is clicked by the user, all empty and numbered cells
      * that are reacheable by the cell are recursively uncovered. Mine cells
      * are avoided. Each cell has 8 immediate neighbours; namely, NW,N,NE,E
-     * SE,S,SW,W. 
+     * SE,S,SW,W.
      */
     public void discoverConnectedEmptyCells(int emptyCell) {
-        int current_col = emptyCell % mainController.N_COLS;
-        // TODO: Discover the 8 neighbours of the empty cell, provided that they are within the
-        // minefield boundaries. For each neighbour, if it is an empty cell, we continue
-        // TODO: Discover the 3 neighbours that are in the same column as the empty cell         
-        // TODO: Discover the 3 neighbours that are in the same row as the empty cell
+        for (int neighbour : getNeighbours(emptyCell)) {
+            MineFieldCell cell = field[neighbour];
+            // Only uncover covered cells; flagged cells and already
+            // uncovered cells are left alone
+            if (cell.getIconType() != IconType.TILE_COVERED
+                || cell.getContentType() == ContentType.MINE) {
+                continue;
+            }
+            if (cell.getContentType() == ContentType.ZERO) {
+                cell.setIconType(IconType.TILE_EMPTY);
+                discoverConnectedEmptyCells(neighbour);
+            } else {
+                cell.setIconType(IconType.NUMBER);
+            }
+        }
+    }
 
+    /*
+     * Uncovers every mine that is still covered. Used when the game is lost.
+     */
+    public void revealAllMines() {
+        for (MineFieldCell cell : field) {
+            if (cell.getContentType() == ContentType.MINE
+                && cell.getIconType() == IconType.TILE_COVERED) {
+                cell.setIconType(IconType.MINE);
+            }
+        }
     }
 
     /*

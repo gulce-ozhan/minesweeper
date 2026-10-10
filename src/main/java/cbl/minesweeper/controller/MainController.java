@@ -214,7 +214,8 @@ public class MainController {
 
     // Handles the chores for loss of the game.
     public void gameLost(){
-        // TODO: 
+        setGameStatus(GameStatus.LOST);
+        getMinefieldModel().revealAllMines();
     }
 
     // Restarts the game with the selected difficulty.
@@ -237,7 +238,7 @@ public class MainController {
         initGUI();
 
         // Set the game status to ongoing
-        // gameStatus = GameStatus.ONGOING;
+        gameStatus = GameStatus.ONGOING;
         //TODO: Start the timer
         
 
