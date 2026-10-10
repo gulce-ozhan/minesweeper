@@ -6,14 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.Timer;
 
 import cbl.minesweeper.model.MineFieldCell;
 import cbl.minesweeper.model.MinefieldModel;
@@ -77,6 +76,9 @@ public class MainController {
 
 
     //TODO: private MinesweeperTimerTask timerTask;
+    private Timer timer;
+    private int elapsedSeconds = 0;
+    private JLabel timerLabel;
     
     // The following configuration parameters are read/overrridden from the config.properties
     public String ICON_PATH = "src/main/resources/icons/";
@@ -176,8 +178,8 @@ public class MainController {
         pnlTopControl.add(pnlCenter, BorderLayout.CENTER);
 
         //timer
-        JLabel lblTimer = new JLabel("Time: 00");
-        pnlTopControl.add(lblTimer, BorderLayout.EAST);
+        timerLabel = new JLabel("Time: 00");
+        pnlTopControl.add(timerLabel, BorderLayout.EAST);
 
         //bottom status bar
         lblStatusbar = new JLabel("");
@@ -240,12 +242,16 @@ public class MainController {
         // Set the game status to ongoing
         gameStatus = GameStatus.ONGOING;
         //TODO: Start the timer
-        
-
+        timer = new Timer(1000, e -> {
+            elapsedSeconds++;
+            timerLabel.setText("Time: " + elapsedSeconds); // Update the timer label every second
+        });
 
         EventQueue.invokeLater(() -> {
             var ex = frmMineSweeper; //new MinesweeperFrame(minefieldModel);
-            ex.setVisible(true);        
+            ex.setVisible(true);
+
+            timer.start(); // Start the timer when the frame is visible     
         });
     }
 
