@@ -135,12 +135,17 @@ public class MinefieldModel {
 
     /*
      * Uncovers every mine that is still covered. Used when the game is lost.
+        If a non-mine cell was falsely flagged as such, it is uncovered with a special icon to
+        indicate that the user made a mistake.
      */
     public void revealAllMines() {
         for (MineFieldCell cell : field) {
             if (cell.getContentType() == ContentType.MINE
                 && cell.getIconType() == IconType.TILE_COVERED) {
                 cell.setIconType(IconType.MINE);
+            } else if (cell.getContentType() != ContentType.MINE
+                && cell.getIconType() == IconType.FLAG) {
+                cell.setIconType(IconType.REVERT_FLAG);
             }
         }
     }

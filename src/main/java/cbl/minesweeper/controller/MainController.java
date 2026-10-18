@@ -79,6 +79,8 @@ public class MainController {
     private Timer timer;
     private int elapsedSeconds = 0;
     private JLabel timerLabel;
+
+    private int seconds = 0;
     
     // The following configuration parameters are read/overrridden from the config.properties
     public String ICON_PATH = "src/main/resources/icons/";
@@ -120,13 +122,37 @@ public class MainController {
             N_COLS_EXP = Integer.parseInt(prop.getProperty("minefield.dim.cols.expert"));
             int difficulty =  Integer.parseInt(prop.getProperty("difficulty.level"));
             DIFFICULTY = Difficulty.values()[difficulty];
-            //TODO: setParametersBasedOnDifficulty(DIFFICULTY);
+            setParametersBasedOnDifficulty(DIFFICULTY);
             CELL_SIZE_PIX = Integer.parseInt(prop.getProperty("cell.size.pixels"));
         } catch (IOException ex) {
             System.out.println("Error occuurred while reading config.properties file. Keeping default values.");
             ex.printStackTrace();
         }
     }
+
+
+    // Sets the number of mines, rows and columns parameters based on the given
+    // difficulty level. All values are nitially read from the properties file
+    private void setParametersBasedOnDifficulty(Difficulty dif){
+        switch (dif){
+            case BEGINNER:
+                N_MINES = N_MINES_BEGIN;
+                N_ROWS = N_ROWS_BEGIN;
+                N_COLS = N_COLS_BEGIN;
+                break;
+            case INTERMEDIATE:
+                N_MINES = N_MINES_INT;
+                N_ROWS = N_ROWS_INT;
+                N_COLS = N_COLS_INT;
+                break;
+            case EXPERT:
+                N_MINES = N_MINES_EXP;
+                N_ROWS = N_ROWS_EXP;
+                N_COLS = N_COLS_EXP;
+                break;
+            }
+    }
+
 
     // Initializes the minefield Model object
     private void initModel() {
@@ -198,7 +224,7 @@ public class MainController {
     }
 
 
-    // Returns the cell at the given index position in the minefield Model
+      // Returns the cell at the given index position in the minefield Model
     public MineFieldCell getCell(int position){
         return getMinefieldModel().getCell(position);
     }
@@ -209,22 +235,43 @@ public class MainController {
         getMinefieldModel().discoverConnectedEmptyCells(position);
     }
 
-    // Handles the chores for winning the game.
+    // Handles the chores for winning the game. Specifically, the displays
+    // in the top control panel and the minefield are updated accordingly
     public void gameWon(){
-        setGameStatus(GameStatus.WON);
+        gameStatus = GameStatus.WON;
         timer.stop();
+        pnlTopControl.gameWon();
+        redrawFrame();
     }
 
-    // Handles the chores for loss of the game.
+    // Handles the chores for loss of the game. Specifically, the displays
+    // in the top control panel and the minefield are updated accordingly
     public void gameLost(){
-        setGameStatus(GameStatus.LOST);
+        gameStatus = GameStatus.LOST;
         timer.stop();
-        getMinefieldModel().revealAllMines();
+        pnlTopControl.gameLost();
+        redrawFrame(); 
     }
 
-    // Restarts the game with the selected difficulty.
+    // Restarts the game with the existing difficulty. Triggred by clicking 
+    // on the smiley icon on the top control panal.
+    public void restartGame(){
+        restartGame(DIFFICULTY);
+    }
+
+    // Restarts the game with the selected difficulty. Triggred by clicking 
+    // on the difficu;ty level buttons in the top control panal.
     public void restartGame(Difficulty level){
-        // TODO:
+        DIFFICULTY = level;
+        setParametersBasedOnDifficulty(level);
+        initModel();
+        gameStatus = GameStatus.ONGOING;
+        pnlMineSweeperBoard.restartGame();
+        pnlTopControl.prepareStart();   
+        seconds = 0;
+        timer.restart();               
+        // pnlMineSweeperBoard.repaint();
+        redrawFrame();  
     }
 
     // Forces a redraw of the top-level container. Used multiple times 
