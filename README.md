@@ -28,7 +28,7 @@ The user specifies configuration parameters in the config.properties file and la
 ## Buiding and Running
 - Compile and run in VSCode IDE: the application can be compiled and launched by running Main.java.
 - Build automation with maven: in a terminal, run *mvn clean package* to build the project and generata an executable JAR file.
-- Launchh executable JAR: to directly launch the application, in a terminal go to where the jar file is and run *java -jar minesweeper-1.0.jar*
+- Launch executable JAR: in a terminal, go to project root folder and run *java -jar target/minesweeper-1.0.jar*
 
 ## Draft Backlog Ideas:
 No	Name	How to Demo	Notes
