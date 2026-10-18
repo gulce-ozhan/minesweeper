@@ -1,7 +1,6 @@
 package cbl.minesweeper.controller;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +8,6 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.Timer;
 
 import cbl.minesweeper.model.MineFieldCell;
@@ -19,9 +15,58 @@ import cbl.minesweeper.model.MinefieldModel;
 import cbl.minesweeper.view.MinesweeperBoard;
 import cbl.minesweeper.view.TopControlPanel;
 
+/**
+ * CBL Project - Minesweeper Game
+ * 
+ * Usage:
+ * DESCRIPTION:
+ *      This CBL project implements the minesweeper game of Windows in
+ *      a more modern GUI with extended features. The project uses advanced 
+ *      Swing constructs (JFrame, JPanel, JButton, JRadioButton, 
+ *      GridbagLayout, BoxLayout), event handling (ActionListener,
+ *      MouseAdapter), and game configuration via properties file. The design
+ *      also follows the most widely used GUI interaction design pattern, 
+ *      Model-View-Controller. The project is hosted on GitHub and can be accessed at
+ *      https://github.com/gulce-ozhan/minesweeper. Using git as a version control 
+ *      system, the project is developed by a team of two students.
+ *      <p>
+ *      The game starts by taking into account the difficulty level and the
+ *      related parameters in properties file. There are 3 dfficulty levels:
+ *      beginner (9x9, 40 mines), intermediate (16x16, 40 mines) and expert
+ *      (16x30, 99 mines). The user can restart the game any time by clicking
+ *      the restart button seen as the smiley icon. As the game unfolds, status
+ *      on the remaining mines (as user flags assumed mine cells) and the time
+ *      elapsed are displayed. If the user wins, the smiley icon turns to 'cool
+ *      smiley' and if the user loses by stepping on a mine, the icon turns to
+ *      'sad smiley'. In either case of win or lose, the minefield is displayed
+ *      to the user in open form. The user can any time switch to a different 
+ *      difficulty level by clicking on the 1,2,3, buttons on the top control 
+ *      panel. The same difficulty level is kept in subsequent restarts.
+ *
+ * INPUT/OUTPUT SPECIFICATIONS:
+ *      The user specifies configuration parameters in the config.properties
+ *      file and launches the main application that starts the Minesweeper
+ *      game GUI. The user inputs are provided by mouse clicks on the mine
+ *      field and on the top control panel. Output responses are instantly
+ *      provided in the GUI. The game ends by user clicking on the close (x)
+ *      button at the top right corner of the main frame.
+ * 
+ * @author Gulce Özhan
+ * @id 2457288
+ * @author Oney Khambhadia
+ * @id 2422301
+ */
+
+ /*
+  * This is the main Controller class of the game. It manages the Views
+  * (minesweeperBoard and TopControlPanel) and the Models (MinefieldModel
+  * and MinefieldCell). Access and population of the game configuration 
+  * parameters from the config.properties file are also done in thie class.
+  */
+
 public class MainController {
     
-        /*
+    /*
      * enum for keeping the game status, which can be in ongoing, won or 
      * lost at any given time.
      */
@@ -53,12 +98,12 @@ public class MainController {
     // with the model and view objects. It is one of the key instruments
     // in determining the end of the game
     private int minesLeft;
-    public int getMinesLeft(){
+    public int getMinesLeft() {
         return minesLeft;
     }
-    public void setMinesLeft(int minesLeft){
+    public void setMinesLeft(int minesLeft) {
         this.minesLeft = minesLeft;
-        if (pnlTopControl!=null){
+        if (pnlTopControl != null){
             pnlTopControl.setMinesLeft(minesLeft);
         }
     }
@@ -73,15 +118,8 @@ public class MainController {
     // button (smiley icon), game difficulty level buttons and the timer
     private TopControlPanel pnlTopControl;
     // The timer used to tick the timer counter every second.
-
-
-    //TODO: private MinesweeperTimerTask timerTask;
     private Timer timer;
-    private int elapsedSeconds = 0;
-    private JLabel timerLabel;
-
     private int seconds = 0;
-    
     // The following configuration parameters are read/overrridden from the config.properties
     public String ICON_PATH = "src/main/resources/icons/";
     public String ICON_SUFFIX = ".png";     
@@ -130,7 +168,6 @@ public class MainController {
         }
     }
 
-
     // Sets the number of mines, rows and columns parameters based on the given
     // difficulty level. All values are nitially read from the properties file
     private void setParametersBasedOnDifficulty(Difficulty dif){
@@ -153,7 +190,6 @@ public class MainController {
             }
     }
 
-
     // Initializes the minefield Model object
     private void initModel() {
         setMinesLeft(N_MINES);
@@ -164,58 +200,15 @@ public class MainController {
     // Initializes the GUI View objects
     private void initGUI() {
         frmMineSweeper = new JFrame();
-        
         pnlTopControl = new TopControlPanel(this);
-        pnlTopControl.setMinesLeft(minesLeft);
-        pnlTopControl.setLayout(new BorderLayout());
-
-        JLabel lblMineCounter = new JLabel("Mines: 10");
-        pnlTopControl.add(lblMineCounter, BorderLayout.WEST);
-        
         frmMineSweeper.add(pnlTopControl, BorderLayout.NORTH);
-        //smiley button
-        ImageIcon smileyicon = new ImageIcon(ICON_PATH + "smiley" + ICON_SUFFIX);
-        JButton btnRestart = new JButton(smileyicon);
 
-        JPanel pnlRestart = new JPanel();
-        pnlRestart.add(btnRestart);
-
-
-
-        //numbers png
-        ImageIcon oneicon = new ImageIcon(ICON_PATH + "one" + ICON_SUFFIX);
-        ImageIcon twoicon = new ImageIcon(ICON_PATH + "two" + ICON_SUFFIX);
-        ImageIcon threeicon = new ImageIcon(ICON_PATH + "three" + ICON_SUFFIX);
-
-        JLabel lblOne = new JLabel(oneicon);
-        JLabel lblTwo = new JLabel(twoicon);
-        JLabel lblThree = new JLabel(threeicon);
-
-
-        JPanel pnlCenter = new JPanel();
-
-        // center controls
-
-        pnlCenter.add(btnRestart);
-        pnlCenter.add(lblOne);
-        pnlCenter.add(lblTwo);
-        pnlCenter.add(lblThree);
-
-        pnlTopControl.add(pnlCenter, BorderLayout.CENTER);
-
-        //timer
-        timerLabel = new JLabel("Time: 00");
-        pnlTopControl.add(timerLabel, BorderLayout.EAST);
-
-        //bottom status bar
         lblStatusbar = new JLabel("");
         frmMineSweeper.add(lblStatusbar, BorderLayout.SOUTH);
 
-        //minesweeper board
         pnlMineSweeperBoard = new MinesweeperBoard(lblStatusbar, this);
         frmMineSweeper.add(pnlMineSweeperBoard);
 
-        //frame settings
         frmMineSweeper.setResizable(false);
         frmMineSweeper.pack();
         frmMineSweeper.setTitle("Minesweeper");
@@ -224,20 +217,20 @@ public class MainController {
     }
 
 
-      // Returns the cell at the given index position in the minefield Model
-    public MineFieldCell getCell(int position){
+    // Returns the cell at the given index position in the minefield Model
+    public MineFieldCell getCell(int position) {
         return getMinefieldModel().getCell(position);
     }
 
     // Triggered by the View to initiate the discovery of the empty cells
     // in the Model, upon user click
-    public void discoverConnectedEmptyCells(int position){
+    public void discoverConnectedEmptyCells(int position) {
         getMinefieldModel().discoverConnectedEmptyCells(position);
     }
 
     // Handles the chores for winning the game. Specifically, the displays
     // in the top control panel and the minefield are updated accordingly
-    public void gameWon(){
+    public void gameWon() {
         gameStatus = GameStatus.WON;
         timer.stop();
         pnlTopControl.gameWon();
@@ -246,7 +239,7 @@ public class MainController {
 
     // Handles the chores for loss of the game. Specifically, the displays
     // in the top control panel and the minefield are updated accordingly
-    public void gameLost(){
+    public void gameLost() {
         gameStatus = GameStatus.LOST;
         timer.stop();
         pnlTopControl.gameLost();
@@ -255,13 +248,13 @@ public class MainController {
 
     // Restarts the game with the existing difficulty. Triggred by clicking 
     // on the smiley icon on the top control panal.
-    public void restartGame(){
+    public void restartGame() {
         restartGame(DIFFICULTY);
     }
 
     // Restarts the game with the selected difficulty. Triggred by clicking 
     // on the difficu;ty level buttons in the top control panal.
-    public void restartGame(Difficulty level){
+    public void restartGame(Difficulty level) {
         DIFFICULTY = level;
         setParametersBasedOnDifficulty(level);
         initModel();
@@ -270,40 +263,30 @@ public class MainController {
         pnlTopControl.prepareStart();   
         seconds = 0;
         timer.restart();               
-        // pnlMineSweeperBoard.repaint();
         redrawFrame();  
     }
 
     // Forces a redraw of the top-level container. Used multiple times 
     // in response to changes of the game status and user actions/clicks
-    private void redrawFrame(){
+    private void redrawFrame() {
         frmMineSweeper.pack();
         frmMineSweeper.repaint(); 
     }
-
-
+    
     // Launches the game for the first time. Used by the main method.
-    public void launchGame(){
+    public void launchGame() {
         readProperties();
         initModel();
         initGUI();
-
-        // Set the game status to ongoing
         gameStatus = GameStatus.ONGOING;
-        //TODO: Start the timer
+        //Start the timer
         timer = new Timer(1000, e -> {
-            elapsedSeconds++;
-            timerLabel.setText("Time: " + elapsedSeconds); // Update the timer label every second
+            seconds++;
+            pnlTopControl.setTime(seconds);
         });
+        timer.start();
+        frmMineSweeper.setVisible(true);
 
-        EventQueue.invokeLater(() -> {
-            var ex = frmMineSweeper; //new MinesweeperFrame(minefieldModel);
-            ex.setVisible(true);
-
-            timer.start(); // Start the timer when the frame is visible     
-        });
     }
-
-    //TODO: Implement the timer task to update the timer label on the top control panel every second.
 
 }

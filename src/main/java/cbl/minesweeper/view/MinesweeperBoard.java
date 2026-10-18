@@ -58,7 +58,7 @@ public class MinesweeperBoard extends JPanel {
     /*
      * Creates the icons for the cells
      */
-    private void initIcons(){
+    private void initIcons() {
         String iconPath = mainControl.ICON_PATH;
         String suffix = mainControl.ICON_SUFFIX;
         ICN_TILE_EMPTY = new ImageIcon(iconPath + "tile-empty" + suffix);
@@ -88,7 +88,7 @@ public class MinesweeperBoard extends JPanel {
     /*
      * Initializes the GUI of the minefield panel. 
      */
-    public void initGUI(){
+    public void initGUI() {
         BOARD_WIDTH = mainControl.N_COLS * this.mainControl.CELL_SIZE_PIX + 1;
         BOARD_HEIGHT = mainControl.N_ROWS * this.mainControl.CELL_SIZE_PIX + 1;
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
@@ -98,7 +98,7 @@ public class MinesweeperBoard extends JPanel {
      * Restarts the game through board and GUI initializations. This method is 
      * called by the Controller object
      */
-    public void  restartGame(){
+    public void  restartGame() {
         initBoard();
         initGUI();
         repaint();
@@ -142,33 +142,35 @@ public class MinesweeperBoard extends JPanel {
                         break;
 
                 }
-                //If the game is not ongoing (i.e., won or lost), we can reveal the underlying mines
-                if (mainControl.getGameStatus()!=MainController.GameStatus.ONGOING) {
-                    if (cell.getContentType()==MinefieldModel.ContentType.MINE){
-                        if (cell.getIconType()!=MinefieldModel.IconType.MINE_EXPL) {
+                //If the game is not ongoing (i.e., won or lost) we can reveal the underlying mines
+                if (mainControl.getGameStatus() != MainController.GameStatus.ONGOING) {
+                    if (cell.getContentType() == MinefieldModel.ContentType.MINE){
+                        if (cell.getIconType() != MinefieldModel.IconType.MINE_EXPL) {
                             imageToDraw = ICN_MINE.getImage();
                         }
-                    }else if (cell.getContentType()!=MinefieldModel.ContentType.MINE && 
-                                cell.getIconType()==MinefieldModel.IconType.FLAG) {
+                    }else if (cell.getContentType() != MinefieldModel.ContentType.MINE && 
+                                cell.getIconType() == MinefieldModel.IconType.FLAG) {
                         imageToDraw = ICN_FLAG_CROSSED.getImage();
-                    }else if (cell.getIconType()==MinefieldModel.IconType.TILE_COVERED) {
+                    }else if (cell.getIconType() == MinefieldModel.IconType.TILE_COVERED) {
                             imageToDraw = getIconForNumberCell(cell);
                     }
                 }                
-                g.drawImage(imageToDraw, (j * mainControl.CELL_SIZE_PIX), (i * mainControl.CELL_SIZE_PIX), this);
+                g.drawImage(imageToDraw, 
+                    (j * mainControl.CELL_SIZE_PIX), 
+                    (i * mainControl.CELL_SIZE_PIX), this);
             }
         }
         // If the game is on, but there are no more cells left to undiscover,
         // then inform the Controller that the game is won by the user. The 
         // status bar is further updated with the outcome of the game.
-        if (mainControl.getGameStatus()==MainController.GameStatus.ONGOING){
+        if (mainControl.getGameStatus()==MainController.GameStatus.ONGOING) {
             if (cellsYetToDiscover == 0){
                 mainControl.gameWon();
                 statusbar.setText("Game won");
             }
-        }else if (mainControl.getGameStatus()==MainController.GameStatus.LOST){
+        }else if (mainControl.getGameStatus()==MainController.GameStatus.LOST) {
             statusbar.setText("Game lost");
-        }else if (mainControl.getGameStatus()==MainController.GameStatus.WON){
+        }else if (mainControl.getGameStatus()==MainController.GameStatus.WON) {
             statusbar.setText("Game won");
         }
     }
@@ -215,10 +217,11 @@ public class MinesweeperBoard extends JPanel {
             int cRow = y / mainControl.CELL_SIZE_PIX;
 
             //System.out.println("Mouse pressed at: " + x + ", " + y + " corresponding to cell: " + cRow + ", " + cCol);
-            if ((x < mainControl.N_COLS * mainControl.CELL_SIZE_PIX) && (y < mainControl.N_ROWS * mainControl.CELL_SIZE_PIX)) {
+            if ((x < mainControl.N_COLS * mainControl.CELL_SIZE_PIX) && 
+                (y < mainControl.N_ROWS * mainControl.CELL_SIZE_PIX)) {
                 MineFieldCell cell = mainControl.getCell((cRow * mainControl.N_COLS) + cCol);
                 if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
-                    //TODO: Handle the right mouse click event to mark a cell as flagged or
+                    // Handle the right mouse click event to mark a cell as flagged or
                     // unflagged. Update the mines left counter and the status bar accordingly. 
                     // If the user has flagged all mines correctly, inform the Controller that 
                     // the game is won.                      
@@ -293,10 +296,9 @@ public class MinesweeperBoard extends JPanel {
             if (minesLeft == 0) {
                 if (falseFlaggedCells == 0) {
                     mainControl.gameWon();
-                    statusbar.setText("Congratulations! You won the game.");
-                } else {
+                    statusbar.setText("Game won.");
+                } else {                    
                     mainControl.gameLost();
-                    statusbar.setText("You lost! You have flagged some incorrect mines.");
                 }
             }
         }

@@ -1,11 +1,27 @@
 package cbl.minesweeper.view;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
 
 import cbl.minesweeper.controller.MainController;
 
+/*
+ * This class is the top control panel of the Minesweeper game.
+*  It contains the mine counter, timer, restart button, and difficulty selection buttons.  
+ * TopControlPanel
+*/
 public class TopControlPanel extends JPanel {
 
     MainController mainControl;
@@ -18,39 +34,154 @@ public class TopControlPanel extends JPanel {
     JButton btnIntermediate;
     JButton btnExpert;
     
-    // TODO: Declare ImageIcon variables for the smiley faces and numbers. 
-    //private ImageIcon ICN_SMILEY;
+    private ImageIcon ICN_SMILEY;
+    private ImageIcon ICN_SMILEY_COOL;
+    private ImageIcon ICN_SMILEY_SAD;
 
-    public TopControlPanel(MainController mainControl){
+    private ImageIcon ICN_ONE;
+    private ImageIcon ICN_TWO;
+    private ImageIcon ICN_THREE;
+
+    public TopControlPanel(MainController mainControl) {
         this.mainControl = mainControl;
         initIcons();
         initialize();
     }
 
-    public void setTime(int seconds){
-        // TODO: Update the timer label with the given seconds.
+    public void setTime(int seconds) {
+        lblTimer.setText("Time: " + seconds);
     }
 
-    public void setMinesLeft(int minesLeft){
-        // TODO: Update the mine counter label with the given mines left.
+    public void setMinesLeft(int minesLeft) {
+        lblMineCounter.setText("Mines: " + minesLeft);        
     }   
     
-    private void initIcons(){
-        // TODO: Initialize the icons for the smiley faces and numbers using the ICON_PATH and ICON_SUFFIX from the main controller.
+    private void initIcons() {
+        String iconPath = mainControl.ICON_PATH;
+        String suffix = mainControl.ICON_SUFFIX;
+        ICN_SMILEY = new ImageIcon(iconPath + "smiley" + suffix, "Restart");
+        ICN_SMILEY_COOL = new ImageIcon(iconPath + "smiley-cool" + suffix, "You won!");
+        ICN_SMILEY_SAD = new ImageIcon(iconPath + "smiley-sad" + suffix, "Bad Luck!");
+
+        ICN_ONE = new ImageIcon(iconPath + "one" + suffix);
+        ICN_TWO = new ImageIcon(iconPath + "two" + suffix);
+        ICN_THREE = new ImageIcon(iconPath + "three" + suffix);
     }
 
-    public void initialize(){
-        // TODO: Initialize the top control panel with the mine counter, timer, restart button, and difficulty level buttons. Set up the layout and add action listeners for the buttons.
+    /**
+     * Initializes the components of the top control panel.
+     */
+    public void initialize() {
+        lblMineCounter = new JLabel();
+        lblMineCounter.setText("Mines: "+mainControl.getMinesLeft());
+        lblMineCounter.setMinimumSize(new Dimension(79, 36));
+        
+        lblTimer = new JLabel("Time: ");
+        lblTimer.setMinimumSize(new Dimension(79, 36));
+        lblTimer.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        btnRestart = new JButton(ICN_SMILEY);
+        btnRestart.setToolTipText("Restart Game");        
+        btnRestart.setPreferredSize(new Dimension(36,36));
+        btnRestart.setMinimumSize(new Dimension(36, 36));
+        btnRestart.setOpaque(false);       
+        btnRestart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                mainControl.restartGame();
+            }
+        });
+    
+        JRadioButton rbtnBeginner = new JRadioButton("", ICN_ONE, true);
+        rbtnBeginner.setToolTipText("Beginner");
+        rbtnBeginner.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt){
+                mainControl.restartGame(MainController.Difficulty.BEGINNER);
+            }
+        });
+        JRadioButton rbtnIntermediate = new JRadioButton("", ICN_TWO, true);
+        rbtnIntermediate.setToolTipText("Intermediate");
+        rbtnIntermediate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt){
+                mainControl.restartGame(MainController.Difficulty.INTERMEDIATE);
+            }
+        });
+        JRadioButton rbtnExpert = new JRadioButton("", ICN_THREE, true);
+        rbtnExpert.setToolTipText("Expert");
+        rbtnExpert.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt){
+                mainControl.restartGame(MainController.Difficulty.EXPERT);
+            }
+        });
+
+        Insets compactMargin = new Insets(1, 1, 1, 1); // Top, Left, Bottom, Right padding
+        rbtnBeginner.setMargin(compactMargin);
+        rbtnIntermediate.setMargin(compactMargin); 
+        rbtnExpert.setMargin(compactMargin);
+
+        ButtonGroup btgDifficulty = new ButtonGroup();        
+        btgDifficulty.add(rbtnBeginner);
+        btgDifficulty.add(rbtnIntermediate);
+        btgDifficulty.add(rbtnExpert);        
+        JPanel pnlDifficulty = new JPanel();
+        pnlDifficulty.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        pnlDifficulty.setMinimumSize(new Dimension(102,36));
+        pnlDifficulty.setMaximumSize(new Dimension(102,36));
+        pnlDifficulty.setLayout(new BoxLayout(pnlDifficulty, BoxLayout.X_AXIS));
+        pnlDifficulty.add(rbtnBeginner);
+        pnlDifficulty.add(rbtnIntermediate);
+        pnlDifficulty.add(rbtnExpert);
+
+        setLayout(new GridBagLayout());        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 4, 2, 4);
+        gbc.gridy = 0;
+
+        // Mine counter
+        gbc.gridx = 0;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(lblMineCounter, gbc);
+
+        //Restart button
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE; //HORIZONTAL;
+        add(btnRestart, gbc);
+          
+        // Difficulty buttons
+        gbc.gridx = 2;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE; //HORIZONTAL;
+        add(pnlDifficulty, gbc);
+
+        // Timer
+        gbc.gridx = 3;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(lblTimer, gbc);
     }
 
-    public void gameWon(){
-        // TODO: Update the restart button icon to the cool smiley face when the game is won.
-    }
-    public void gameLost(){
-        //TODO: Update the restart button icon to the sad smiley face when the game is lost.
+    /**
+     * Updates the restart button icon based on the game status.
+     */
+    public void gameWon() {
+        btnRestart.setIcon(ICN_SMILEY_COOL);
     }
 
-    public void prepareStart(){
-        // TODO: Reset the restart button icon to the default smiley face, update the mine counter and timer to their initial values.
+    /**
+     * Updates the restart button icon to indicate that the game is lost.
+     */
+    public void gameLost() {
+        btnRestart.setIcon(ICN_SMILEY_SAD);
+    }
+
+    /**
+     * Prepares the top control panel for a new game by resetting the restart button icon,
+     * updating the mine counter, and resetting the timer.
+     */
+    public void prepareStart() {
+        btnRestart.setIcon(ICN_SMILEY);
+        setMinesLeft(mainControl.getMinesLeft());
+        setTime(0);         
     }
 }

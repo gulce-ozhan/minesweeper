@@ -28,8 +28,6 @@ public class MinefieldModel {
 
     // The main data structure that models the minefield
     private MineFieldCell[] field;
-    // private int allCells;
-    // private int minesLeft;
     private Random random;
     // Reference to the Controller object
     private MainController mainController;

@@ -11,7 +11,7 @@ public class MineFieldCell {
     /*
      * The no-argument constructor sets the cell content to empty and covers it
      */
-    public MineFieldCell(){
+    public MineFieldCell() {
         setContentType(MinefieldModel.ContentType.ZERO);
         setIconType(MinefieldModel.IconType.TILE_COVERED);
     }
@@ -19,7 +19,7 @@ public class MineFieldCell {
     /*
      * The constructor that takes in the content type and icon type
      */
-    public MineFieldCell(MinefieldModel.ContentType contentType, MinefieldModel.IconType iconType){
+    public MineFieldCell(MinefieldModel.ContentType contentType, MinefieldModel.IconType iconType) {
         setContentType(contentType);
         setIconType(iconType);
     }
