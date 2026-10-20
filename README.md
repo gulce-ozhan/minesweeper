@@ -29,17 +29,5 @@ The user specifies configuration parameters in the config.properties file and la
 - Compile and run in VSCode IDE: the application can be compiled and launched by running Main.java.
 - Build automation with maven: in a terminal, run *mvn clean package* to build the project and generata an executable JAR file.
 - Launch executable JAR: in a terminal, go to project root folder and run *java -jar target/minesweeper-1.0.jar*
-
-## Draft Backlog Ideas:
-No	Name	How to Demo	Notes
-1	Display game board	Launch the app; a grid of clearly distinguishable covered cells is displayed in the GUI.	Display a grid of clickable cells.
-2	Start a new game	Launch the app and click New Game; a fresh covered board is created and the game is ready.	Reset the board and randomly place mines.
-3	Reveal a cell	Click a covered cell; the cell is revealed and shows the number of mines in the surrounding cells.	Calculate adjacent mines and display a number from 0–8.
-4	Reveal empty areas	Click a cell with no adjacent mines; nearby empty cells are automatically revealed.	Recursively reveal connected empty cells and their boundaries.
-5	Flag a suspected mine	Right-click a covered cell; the cell is marked with a flag. Right-click again to remove it.	Flagged cells should not be revealed by a normal click.
-6	Detect a mine	Click a cell containing a mine; the game reports a loss and reveals the mines.	Stop normal gameplay after a mine is selected.
-7	Detect a win	Reveal all cells that do not contain mines; the application reports that the player has won.	Check whether all non-mine cells have been revealed.
-8	End the game	Win or lose a game; the result is displayed and further moves are prevented.	Handle both win and loss states.
-9	Track game time	Start a game; a timer begins and stops when the player wins or loses.	Display elapsed playing time.
-10	Display remaining mines	Place or remove flags; the displayed mine counter updates accordingly.	Can show total mines − placed flags.
-11	Configure game settings	Change settings in a .properties file and launch the game; the configured values are used.	Could configure board dimensions or number of mines.
+- Launch executable JAR anywhere: Copy the minesweeper-1.0.jar anywhere on your windows machine that has a JRE installed and double click the JAR file
+- Use external configuration: Copy the minesweeper-1.0.jar anywhere on your windows machine that has a JRE installed. Copy a modified version of the config.properties in the same folder as the JAR file (the file may have partial config data. In that case the rest of the config is taken from the internal config file). Double click the JAR file to launch the game with the new external configuration.
