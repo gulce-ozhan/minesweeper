@@ -14,7 +14,6 @@ import cbl.minesweeper.model.MinefieldModel;
 import cbl.minesweeper.view.MinesweeperBoard;
 import cbl.minesweeper.view.TopControlPanel;
 
-import java.io.FileInputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
