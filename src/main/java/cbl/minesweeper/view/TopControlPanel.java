@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
-
+import java.net.URL;
 import cbl.minesweeper.controller.MainController;
 
 /*
@@ -56,16 +56,32 @@ public class TopControlPanel extends JPanel {
         lblMineCounter.setText("Mines: " + minesLeft);        
     }   
     
-    private void initIcons() {
-        String iconPath = mainControl.ICON_PATH;
-        String suffix = mainControl.ICON_SUFFIX;
-        ICN_SMILEY = new ImageIcon(iconPath + "smiley" + suffix, "Restart");
-        ICN_SMILEY_COOL = new ImageIcon(iconPath + "smiley-cool" + suffix, "You won!");
-        ICN_SMILEY_SAD = new ImageIcon(iconPath + "smiley-sad" + suffix, "Bad Luck!");
 
-        ICN_ONE = new ImageIcon(iconPath + "one" + suffix);
-        ICN_TWO = new ImageIcon(iconPath + "two" + suffix);
-        ICN_THREE = new ImageIcon(iconPath + "three" + suffix);
+    /*
+     * Loads the icon from the resources folder. The icon name and description are passed as parameters.
+     */
+    private ImageIcon loadIcon(String name, String description) {
+        String path = mainControl.ICON_PATH
+                    + name
+                    + mainControl.ICON_SUFFIX;
+
+        URL url = getClass().getResource(path);
+        if (url == null) {
+            throw new IllegalArgumentException("Icon not found: " + path);
+        }
+        return new ImageIcon(url, description);
+    }
+
+    /*
+     * Initializes the icons for the control panel.
+     */
+    private void initIcons() {
+        ICN_SMILEY = loadIcon("smiley", "Restart");
+        ICN_SMILEY_COOL = loadIcon("smiley-cool", "You won!");
+        ICN_SMILEY_SAD = loadIcon("smiley-sad", "Bad Luck!");
+        ICN_ONE = loadIcon("one", "");
+        ICN_TWO = loadIcon("two", "");
+        ICN_THREE = loadIcon("three", "");
     }
 
     /**
