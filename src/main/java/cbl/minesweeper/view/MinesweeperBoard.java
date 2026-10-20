@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.net.URL;
 
 import cbl.minesweeper.controller.MainController;
 import cbl.minesweeper.model.MineFieldCell;
@@ -56,28 +57,40 @@ public class MinesweeperBoard extends JPanel {
     }
 
     /*
+     * Loads the icon from the resources folder. The icon name is passed as a 
+     * parameter. The path and suffix are read from the config.properties file.
+     */
+    private ImageIcon loadIcon(String name) {
+        String path = mainControl.ICON_PATH
+                    + name
+                    + mainControl.ICON_SUFFIX;
+        URL url = getClass().getResource(path);
+        if (url == null) {
+            throw new IllegalArgumentException("Icon not found: " + path);
+        }
+        return new ImageIcon(url);
+    }
+
+    /*
      * Creates the icons for the cells
      */
     private void initIcons() {
-        String iconPath = mainControl.ICON_PATH;
-        String suffix = mainControl.ICON_SUFFIX;
-        ICN_TILE_EMPTY = new ImageIcon(iconPath + "tile-empty" + suffix);
-        ICN_TILE_COVERED = new ImageIcon(iconPath + "tile-covered" + suffix);
-        ICN_MINE = new ImageIcon(iconPath + "mine" + suffix);        
-        ICN_MINE_EXPL = new ImageIcon(iconPath + "mine-exploded" + suffix);
-        ICN_FLAG = new ImageIcon(iconPath + "flag" + suffix);
-        ICN_FLAG_CROSSED = new ImageIcon(iconPath + "flag-crossed" + suffix);
-        ICN_ONE = new ImageIcon(iconPath + "one" + suffix);
-        ICN_TWO = new ImageIcon(iconPath + "two" + suffix);
-        ICN_THREE = new ImageIcon(iconPath + "three" + suffix);
-        ICN_FOUR = new ImageIcon(iconPath + "four" + suffix);
-        ICN_FIVE = new ImageIcon(iconPath + "five" + suffix);
-        ICN_SIX = new ImageIcon(iconPath + "six" + suffix);
-        ICN_SEVEN = new ImageIcon(iconPath + "seven" + suffix);
-        ICN_EIGHT = new ImageIcon(iconPath + "eight" + suffix);
+        ICN_TILE_EMPTY = loadIcon("tile-empty");
+        ICN_TILE_COVERED = loadIcon("tile-covered");
+        ICN_MINE = loadIcon("mine");
+        ICN_MINE_EXPL = loadIcon("mine-exploded");
+        ICN_FLAG = loadIcon("flag");
+        ICN_FLAG_CROSSED = loadIcon("flag-crossed");
+        ICN_ONE = loadIcon("one");
+        ICN_TWO = loadIcon("two");
+        ICN_THREE = loadIcon("three");
+        ICN_FOUR = loadIcon("four");
+        ICN_FIVE = loadIcon("five");
+        ICN_SIX = loadIcon("six");
+        ICN_SEVEN = loadIcon("seven");
+        ICN_EIGHT = loadIcon("eight");
     }
-    
-    /*
+        /*
      * Initializes the game board control variables
      */
     public void initBoard() { 

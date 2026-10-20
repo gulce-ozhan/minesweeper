@@ -1,7 +1,6 @@
 package cbl.minesweeper.controller;
 
 import java.awt.BorderLayout;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -14,6 +13,12 @@ import cbl.minesweeper.model.MineFieldCell;
 import cbl.minesweeper.model.MinefieldModel;
 import cbl.minesweeper.view.MinesweeperBoard;
 import cbl.minesweeper.view.TopControlPanel;
+
+import java.io.FileInputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * CBL Project - Minesweeper Game
@@ -121,8 +126,8 @@ public class MainController {
     private Timer timer;
     private int seconds = 0;
     // The following configuration parameters are read/overrridden from the config.properties
-    public String ICON_PATH = "src/main/resources/icons/";
-    public String ICON_SUFFIX = ".png";     
+    public String ICON_PATH = "/icons/";
+    public String ICON_SUFFIX = ".png";   
     public Difficulty DIFFICULTY = Difficulty.BEGINNER;
     public int N_MINES = 10;
     public int N_ROWS = 9;
@@ -139,16 +144,41 @@ public class MainController {
     private int N_ROWS_EXP = 9;
     private int N_COLS_EXP = 9;
 
-    // Reads key configuration prameters from the properties file
+    /**
+     * Reads the game configuration parameters from the config.properties file. 
+     * If the file is not found in the same directory as the JAR file, the default configuration
+     * packaged with the application is used. If an external config.properties file is found,
+     * it overrides the default. The method handles exceptions related to file I/O and URI     
+     */
     private void readProperties(){
-        //Read the game configuration parameters from the config.properties file
-        String configPath =  "src/main/resources/config.properties";
-        try (InputStream input = new FileInputStream(configPath)) {
-            // Create a new Properties object
-            Properties prop = new Properties();
-            // Use the Properties objects to load the properties file
+        //Read the game configuration parameters from the config.properties file       
+        // Don't use this path, as it will not work when the project is packaged as a JAR
+        // String configPath =  "src/main/resources/config.properties"; 
+        // try (InputStream input = new FileInputStream(configPath)) { 
+        Properties prop = new Properties();
+        // First, load the default configuration packaged with the application (i.e., jar file).
+        try (InputStream input = getClass().getResourceAsStream("/config.properties")) {
+            if (input == null) {
+                throw new IOException("Internal config.properties not found");
+            }
             prop.load(input);
-            // get the property values and print them out
+            // Determine the directory containing the JAR (or compiled classes).
+            Path applicationPath = Paths.get(
+                MainController.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            if (Files.isRegularFile(applicationPath)
+                    && applicationPath.toString().toLowerCase().endsWith(".jar")) {
+                Path externalConfig = applicationPath.getParent()
+                        .resolve("config.properties");
+                if (Files.isRegularFile(externalConfig)) {
+                    try (InputStream externalInput = Files.newInputStream(externalConfig)) {
+                        prop.load(externalInput);
+                        System.out.println("External configuration loaded: " + externalConfig);
+                    }
+                }
+            }
+
+            // Read the effective configuration values.
             N_MINES_BEGIN = Integer.parseInt(prop.getProperty("mine.count.beginner"));
             N_ROWS_BEGIN = Integer.parseInt(prop.getProperty("minefield.dim.rows.beginner"));
             N_COLS_BEGIN = Integer.parseInt(prop.getProperty("minefield.dim.cols.beginner"));
@@ -158,12 +188,14 @@ public class MainController {
             N_MINES_EXP = Integer.parseInt(prop.getProperty("mine.count.expert"));
             N_ROWS_EXP = Integer.parseInt(prop.getProperty("minefield.dim.rows.expert"));
             N_COLS_EXP = Integer.parseInt(prop.getProperty("minefield.dim.cols.expert"));
-            int difficulty =  Integer.parseInt(prop.getProperty("difficulty.level"));
+            int difficulty = Integer.parseInt(prop.getProperty("difficulty.level"));
             DIFFICULTY = Difficulty.values()[difficulty];
             setParametersBasedOnDifficulty(DIFFICULTY);
             CELL_SIZE_PIX = Integer.parseInt(prop.getProperty("cell.size.pixels"));
-        } catch (IOException ex) {
-            System.out.println("Error occuurred while reading config.properties file. Keeping default values.");
+            ICON_PATH = prop.getProperty("icons.path", ICON_PATH);
+            ICON_SUFFIX = prop.getProperty("icons.extension", ICON_SUFFIX);
+        } catch (IOException | URISyntaxException ex) {
+            System.err.println("Error loading configuration.");
             ex.printStackTrace();
         }
     }
