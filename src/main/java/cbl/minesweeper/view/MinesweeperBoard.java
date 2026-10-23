@@ -94,6 +94,7 @@ public class MinesweeperBoard extends JPanel {
      * Initializes the game board control variables
      */
     public void initBoard() { 
+        falseFlaggedCells = 0;
         minesLeft = mainControl.getMinesLeft();
         statusbar.setText(Integer.toString(minesLeft));            
     }
